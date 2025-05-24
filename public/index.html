@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>thinck</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background-color: #ffffff;
+        overflow: hidden;
+        transition: background-color 0.3s;
+      }
+
+      iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+        opacity: 0;
+        transition: opacity 0.4s;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        html,
+        body {
+          background-color: #121212;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      alert("著作権的にほぼアウトなので自己責任で見てください。\nv1.2.6\n //貴重な休日は選挙ポスターを隣人に配ることから始まる\n@kiyu4776");
+
+      const iframe = document.createElement("iframe");
+      iframe.src = "index/v2.html";
+      iframe.onload = () => {
+        iframe.style.opacity = "1";
+      };
+      document.body.appendChild(iframe);
+
+      // fuck you
+      // https://findyoutubevideo.thetechrobo.ca/
+      //https://filmot.com/channel/UCFEt0_aIkl1PWCJuCx8JClg/0/FPSgamer201
+       //貴重な休日は選挙ポスターを隣人に配ることから始まる
+     
+    </script>
+  </body>
+</html>
