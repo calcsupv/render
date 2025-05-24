@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 40px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .search-box {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .search-box input {
+            width: 80%;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            transition: border-color 0.2s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #007acc;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+
+        .card.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+        .card a {
+            display: block;
+            text-decoration: none;
+            color: #333;
+            font-size: 20px;
+            font-weight: bold;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+
+        .card a:hover {
+            color: #007acc;
+            transform: scale(1.05);
+        }
+
+        .contact {
+            text-align: center;
+            margin-top: 60px;
+            font-size: 16px;
+            color: #666;
+        }
+
+        .contact a {
+            color: #007acc;
+            text-decoration: none;
+        }
+
+        .contact a:hover {
+            text-decoration: underline;
+        }
+
+        .video-form {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .video-form h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .video-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .video-form input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        .video-form button {
+            background-color: #007acc;
+            color: white;
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .video-form button:hover {
+            background-color: #005fa3;
+        }
+
+        .version {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 12px;
+            color: #000;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            padding: 5px 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #121212;
+                color: #e0e0e0;
+            }
+
+            .card {
+                background: #1e1e1e;
+                box-shadow: 0 2px 6px rgba(255, 255, 255, 0.05);
+            }
+
+            .card a {
+                color: #e0e0e0;
+            }
+
+            .card a:hover {
+                background-color: #2a2a2a;
+            }
+
+            .contact {
+                color: #aaa;
+            }
+
+            .contact a {
+                color: #5ab4ff;
+            }
+
+            .search-box input {
+                background-color: #1e1e1e;
+                color: #e0e0e0;
+                border: 1px solid #444;
+            }
+
+            .video-form {
+                background-color: #1e1e1e;
+                color: #e0e0e0;
+                border-radius: 8px;
+                box-shadow: 0 2px 6px rgba(255, 255, 255, 0.05);
+            }
+
+            .video-form input {
+                background-color: #333;
+                color: #e0e0e0;
+                border: 1px solid #444;
+            }
+
+            .video-form button {
+                background-color: #007acc;
+                color: white;
+            }
+
+            .video-form button:hover {
+                background-color: #005fa3;
+            }
+
+            .version {
+                color: #fff;
+                background: rgba(0, 0, 0, 0.3);
+                backdrop-filter: blur(6px);
+                -webkit-backdrop-filter: blur(6px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="version">v1.0.4</div>
+    <div class="container">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="動画タイトルを検索...">
+        </div>
+        <div id="videoList"></div>
+
+        <div class="video-form">
+            <h2>動画を提供する</h2>
+            <form id="videoForm">
+                <label for="date">投稿日</label>
+                <input type="date" id="date" required>
+                <label for="title">タイトル</label>
+                <input type="text" id="title" placeholder="タイトルを入力" required>
+                <label for="url">リンク</label>
+                <input type="url" id="url" placeholder="動画のリンクを入力" required>
+
+                <button type="submit">送信する</button>
+            </form>
+        </div>
+        <div class="contact">
+            お問い合わせ: <a href="mailto:ii45iiy@gmail.com">email</a>
+        </div>
+
+    </div>
+
+    <script>
+
+        const videoData = [
+            { date: '2013/04/18', title: 'Crazy GMAN', url: 'https://web.archive.org/web/1oe_/http://wayback-fakeurl.archive.org/yt/t1MM9yP0fwQ' },
+            { date: '2013/07/01', title: 'ゆっくり実況でAmnesia:TDDをプレイ Part4', url: 'https://web.archive.org/web/1oe_/http://wayback-fakeurl.archive.org/yt/uhkBpLsINcc' },
+            { date: '2013/08/22', title: 'ゆっくり実況でAmnesia:TDDを実況プレイ Part6', url: 'https://web.archive.org/web/1oe_/http://wayback-fakeurl.archive.org/yt/bda4kA-3zrg' },
+            { date: '2013/08/22', title: 'ゆっくり実況でAmnesia:TDDを実況プレイ Part7', url: 'https://web.archive.org/web/1oe_/http://wayback-fakeurl.archive.org/yt/YhMDaAPxhV0' },
+            { date: '2017/07/23', title: 'ゆっくり実況でバイオハザード：アウトブレイクをプレイ', url: 'https://web.archive.org/web/1oe_/http://wayback-fakeurl.archive.org/yt/v52-bHBJa9o' },
+            { date: '2020/08/02', title: 'SCP-682とSCP-173を戦わせてみた【GMOD ゆっくり実況】', url: 'https://web.archive.org/web/1oe_/http://wayback-fakeurl.archive.org/yt/BSUKCBhuxGs' },
+            { date: '2020/10/31', title: '8体の強化SCPを倒せ！①【GMOD ゆっくり実況】', url: 'https://drive.google.com/file/d/1KZS-RNVlphtmC_IvyzQX0NTVENn2VPLG/preview' },
+            { date: '2020/10/31', title: 'デスゲームを主催してみた【GMOD ゆっくり実況】', url: 'https://calcsupv.github.io/w1AwEZVLnhns8Ya4WnGYnKYzNfUiK1ftbbL0M5G9YzdCp4g6vlip0HSKuuLv7EaTxBrx80fGYyTDnvQ3hWyIouLmzlL05v2wByOm/w1AwEZVLnhns8Ya4WnGYnKYzNfUiK1ftbbL0M5G9YzdCp4g6vlip0HSKuuLv7EaTxBrx80fGYyTDnvQ3hWyIouLmzlL05v2wByOm/1.html' },
+            { date: '2021/01/31', title: '世界一縦に長いトンネルを登ってみた【GMOD ゆっくり実況】', url: 'https://web.archive.org/web/1oe_/http://wayback-fakeurl.archive.org/yt/5ZNFQmIzrBI' },
+            { date: '2021/02/06', title: 'ロシアの団地で発見されたSCP-087が怖い【GMOD ゆっくり実況】', url: 'https://web.archive.org/web/1oe_/http://wayback-fakeurl.archive.org/yt/zxy123example' },
+            { date: '2021/02/08', title: '宝くじで10億円当ててしまった霊夢【GMOD ゆっくり劇場】', url: 'https://web.archive.org/web/1oe_/http://wayback-fakeurl.archive.org/yt/HwVcfrbrLoY' },
+            { date: '2021/02/17', title: 'SCP-3008 IKEAで一晩シャイガイから逃げ切ったら100万円【GMOD ゆっくり実況】', url: 'https://web.archive.org/web/1oe_/http://wayback-fakeurl.archive.org/yt/aBVme-qFDZQ' },
+            { date: '2021/02/21', title: 'ピーチ城に不法侵入したらマ●オにキレられた【ゆっくり実況】', url: 'https://web.archive.org/web/1oe_/http://wayback-fakeurl.archive.org/yt/jJGX4XoQXdw' },
+            { date: '2021/02/22', title: '雑草が育つのをただ見守るゲーム【ゆっくり実況】', url: 'https://web.archive.org/web/1oe_/http://wayback-fakeurl.archive.org/yt/y1RT74zzgWQ' },
+            { date: '2021/03/03', title: '精神崩壊した友達が最後に作ったゲームが怖すぎる【ゆっくり解説】', url: 'https://web.archive.org/web/1oe_/http://wayback-fakeurl.archive.org/yt/jT68Mh1rPKk' },
+            { date: '2021/03/05', title: '大量の霊夢と魔理沙を戦わせてみた②【GMOD ゆっくり実況】', url: 'https://web.archive.org/web/1oe_/http://wayback-fakeurl.archive.org/yt/79yDxt4EZ2A' },
+            { date: '2021/04/22', title: 'シャイガイを消せ！⑤【GMOD ゆっくり劇場】', url: 'https://web.archive.org/web/1oe_/http://wayback-fakeurl.archive.org/yt/qdHLslqnwHU' },
+            { date: '2021/04/29', title: 'CLASS-D職員100人で最後までシャイガイから逃げ切ったら100万円【GMOD ゆっくり実況】', url: 'https://web.archive.org/web/1oe_/http://wayback-fakeurl.archive.org/yt/rQVuWIexmX0' },
+            { date: '2021/05/01', title: 'nil', url: 'https://web.archive.org/web/1oe_/http://wayback-fakeurl.archive.org/yt/l4HW0hbRbkU' },
+            { date: '2025/05/04', title: 'farewell', url: 'https://drive.google.com/file/d/1TNMWf75bdHjeFyWpNqMiCkmoqppweWww/preview' },
+            { date: '不明', title: '29時のNEO TOKYOを散歩する霊夢と魔理沙【GMOD ゆっくり実況】', url: 'https://ghostvideo.b-cdn.net/chimurai/WvwVta4eWKw.mp4' },
+            { date: '不明', title: 'BackRoomsでエンティティーと戦ってみた【ゆっくり実況】', url: 'https://web.archive.org/web/20240227114014id_/https://rr3---sn-vgqsknzs.googlevideo.com/videoplayback?...' },
+            { date: '不明', title: 'サイレンヘッドと戦ってみた 【GMOD ゆっくり実況】', url: 'https://web.archive.org/web/20210306055634id_/https://r3---sn-a5mekn7y.googlevideo.com/videoplayback?...' },
+            { date: '不明', title: 'トレバーヘンダーソンキャラと戦ってみた ⑤ 【GMODゆっくり実況】', url: 'https://web.archive.org/web/20210531114754id_/https://r5---sn-a5meknlz.googlevideo.com/videoplayback?...' },
+            { date: "2021/09/23", title: "SCP-682をプレス機で潰した結果…【ゆっくり実況GMOD】", url: "https://ghostvideo.b-cdn.net/chimurai/zlH0qf9wdLc.mp4" },
+            { date: "不明", title: "巨大な柴犬の頭と戦ってみた 【GMODゆっくり実況】", url: "https://web.archive.org/web/20240726054518id_/https://rr3---sn-a5mekn6r.googlevideo.com/videoplayback?expire=1721994293&ei=1TejZuePE7OQsfIPxL3a0AU&ip=185.211.32.220&id=o-ABWRB8M5vZRmreE6xnCABBIaqdVeJB9wo1l1rs2lkXJz&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AXc671Lb_Nl3Thsn6w8HykTrnASn3KOKWVv14PFidFvU-tPevm3NCVuug2DnDQHkdFDVFaBVEbkaaG7h&spc=NO7bAdCJ7DHA0Dp_NWQpCavN9PrPcRQxihSXeGcQtMSCPqM-YyU_6iFKyrJELck&vprv=1&svpuc=1&mime=video%2Fmp4&ns=NZ-b9ZY_DRIt6YA7AIkID58Q&rqh=1&cnr=14&ratebypass=yes&dur=745.128&lmt=1716826586433100&c=WEB&sefc=1&txp=4538434&n=L4qA-tDZ1iz1Vg&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Ccnr%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRAIgS5t0hBQ--4Dj6kyFwrBXp6fqbKvDDL0FPd3z_WNRIcUCICsNQ4IYKVNfWuXyfEFJlLTkvo3vyRHlbYIug4KAB2YQ&video_id=cI98ZZ8oiJ4&redirect_counter=1&cm2rm=sn-a5myl7e&rrc=80&fexp=24350516,24350518,24350556&req_id=85240d891735a3ee&cms_redirect=yes&cmsv=e&mh=05&mip=2620:0:9c0:3:7c61:4776:d59f:ca99&mm=34&mn=sn-a5mekn6r&ms=ltu&mt=1721972455&mv=m&mvi=3&pl=48&lsparams=mh,mip,mm,mn,ms,mv,mvi,pl&lsig=AGtxev0wRQIgCXSbk9cT0mUgVhhJ4eLho4Oqjmszcy7bX-hYt-XOs20CIQDy3dPFQoZBR1Ib32D42WVyVkMQskyQRyhUaF--BxZNtA%3D%3D" },
+            { date: "2021/09/21", title: "人見知りだけどミトリでお買い物をする霊夢", "url": "https://ghostvideo.b-cdn.net/chimurai/Xme-XQEQcfQ.mp4" },
+            { date: "2021/01/23", title: "SCP-087内部を探索してみた【GMOD ゆっくり実況】", "url": "https://web.archive.org/web/20210502125834id_/https://r4---sn-a5m7lnlz.googlevideo.com/videoplayback?expire=1619981900&ei=7KGOYPC8L-uQsfIPkMuyoAc&ip=207.241.229.236&id=o-ACbmyNIZmF4vEcsmYVLxIiwxGDDl3lTw5rSmoT-HuIjs&itag=22&source=youtube&requiressl=yes&vprv=1&mime=video%2Fmp4&ns=ZXP__uStOe0Bx0udktfDj4MF&cnr=14&ratebypass=yes&dur=951.484&lmt=1614501299272500&fvip=4&fexp=24001373,24007246&c=WEB&txp=1432434&n=zSYF95HUf5_ZU31z3DX&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cvprv%2Cmime%2Cns%2Ccnr%2Cratebypass%2Cdur%2Clmt&sig=AOq0QJ8wRAIgOwaOZvpNSPhFvbF-u2pUWUmGAUmruhRvTCksrNRCMbkCICEhfYwqwa3aHhWJt_mpvPr1tVKyPaTEayQlM6sgjnjc&video_id=5ZNFQmIzrBI&redirect_counter=1&cm2rm=sn-n4vek7l&req_id=721eb8b0b7f0a3ee&cms_redirect=yes&mh=_k&mm=34&mn=sn-a5m7lnlz&ms=ltu&mt=1619960188&mv=m&mvi=4&pl=20&lsparams=mh,mm,mn,ms,mv,mvi,pl&lsig=AG3C_xAwRgIhAK_er-UP8EKmrlpkwZCP21oNzMS6yp04fYlextRYLszmAiEAivl4DMITVFvRohK8kEXoiTtoEu_m300PbZR30xQbWWU%3D" },
+            { date: "2021/07/05", title: "四次元空間生成装置を使ってみた【GMOD ゆっくり実況】", url: "https://web.archive.org/web/20240202222728id_/https://rr2---sn-vgqsknsk.googlevideo.com/videoplayback?expire=1706934445&ei=TWy9ZY6DBvOa2_gPx7uryAs&ip=173.224.16.31&id=o-AMDMtCtkmQ04TZBktTeIG_6btMgfXNquIdUYf--t6_Ky&itag=22&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&spc=UWF9fzqMY6jcBvpPdwQdtcgps9XM_q4oxeW8BrelxfPSVRA&vprv=1&svpuc=1&mime=video%2Fmp4&ns=VL7AdCPYHAfJ7_bZePXp8mUQ&cnr=14&ratebypass=yes&dur=713.479&lmt=1625546754774032&fexp=24007246&c=WEB&txp=5535432&n=uhXqDPBdPEVD4g&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Ccnr%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRQIhAJhnZROPlrcjORlOv4hrm5jz-EylpBNodkDcHbta2CqZAiANGnEIEBDtd3JrbqTjN3c0bgJnFOkNqzUuEQqAh9Q6jA%3D%3D&video_id=ZzEuSTj0Nas&cm2rm=sn-oxapo3-vh5e7l,sn-vgqesr7l&req_id=90a1a7267a21a3ee&redirect_counter=2&cms_redirect=yes&cmsv=e&mh=Zr&mm=34&mn=sn-vgqsknsk&ms=ltu&mt=1706912433&mv=m&mvi=2&pl=20&lsparams=mh,mm,mn,ms,mv,mvi,pl&lsig=AAO5W4owRAIgZfXdcG-0C9sUIGhGUhHyPZ7GCMGo3JRG53eNTGMX9zgCIBavBbINTa3s4Uho6xbApBLvuP811t23zn_uaQRO7BLn" },
+            { date: "2021/06/01", title: "見たもの全てが現実になるゲーム【ゆっくり解説】", url: "https://web.archive.org/web/20210620205423id_/https://r5---sn-a5meknl6.googlevideo.com/videoplayback?expire=1624244060&ei=_KrPYOr1AYaekwaIyaPgDA&ip=207.241.229.52&id=o-ALnsKcyFZQfOGBSiQ5Pf6m-HAic6Y0Or1KrfXC0WQ22c&itag=22&source=youtube&requiressl=yes&vprv=1&mime=video%2Fmp4&ns=KwzDdcc5mOxlh0v8okijPocF&cnr=14&ratebypass=yes&dur=743.642&lmt=1622568767265104&fexp=24001373,24007246&c=WEB&txp=5532434&n=sbhqvUr4_U8TXTQFS&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cvprv%2Cmime%2Cns%2Ccnr%2Cratebypass%2Cdur%2Clmt&sig=AOq0QJ8wRAIge92ma7wdEUpRrIFvOzzK0c2DP_TQuXuu8zgKKNNUk4sCIEI4KAdYtXh3tM0Pkgd4BBkL3BOJ5He0XdFXjL6pFCLa&video_id=x4XfS41xfoU&redirect_counter=1&cm2rm=sn-n4ve676&req_id=21aada461809a3ee&cms_redirect=yes&mh=sD&mm=34&mn=sn-a5meknl6&ms=ltu&mt=1624222351&mv=m&mvi=5&pl=20&lsparams=mh,mm,mn,ms,mv,mvi,pl&lsig=AG3C_xAwRQIgBOw6rjO54q12bke2JR5nHDv3lQPjIRgw-a3pER2PhYoCIQCCHGQ8vKfJawQgAdylvsbQ9eE6lZSU8X9tf4O4AdlYfg%3D%3D" },
+            { date: "2022/02/08", title: "このプールで迷子になったことありませんか？【Anemoiapolis ゆっくり実況】", url: "https://ghostvideo.b-cdn.net/chimurai/CyoJUWXP7IY.mp4" },
+            { date: "2021/07/02", title: "ハンドパワーだけで建物を木っ端微塵にしてみた【GMOD ゆっくり実況】", url: "https://web.archive.org/web/20240207182502id_/https://rr4---sn-5hne6nzy.googlevideo.com/videoplayback?expire=1707351898&ei=-srDZcHWHMaXv_IPlfy2wAo&ip=135.181.141.12&id=o-AMX8Er7Z3mVillXActfMvW4CnshOZhmErIgPEr6iuhq7&itag=22&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&spc=UWF9f256K8XvI8BFqdrYBp-5JoOmqQLJClb0TYljAd-FmtE&vprv=1&svpuc=1&mime=video%2Fmp4&ns=TO8lKq-hGQMQJweLv9cv1c8Q&cnr=14&ratebypass=yes&dur=734.725&lmt=1625470355638080&fexp=24007246&c=WEB&sefc=1&txp=5535432&n=V6Mg5W_-XWK6PA&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Ccnr%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRgIhAIO4vtpo3PZVgSjYBfCdBKhd6fr-pc23f-Vle-VT28sOAiEArePbBr6mCvJC4qS25_j_RmNYT93NkxntDm2xAmMm-Uk%3D&video_id=CurU_UWk5b8&redirect_counter=1&cm2rm=sn-5gos77z&req_id=bb511232e6f9a3ee&cms_redirect=yes&cmsv=e&mh=MV&mm=34&mn=sn-5hne6nzy&ms=ltu&mt=1707330055&mv=m&mvi=4&pl=21&lsparams=mh,mm,mn,ms,mv,mvi,pl&lsig=AAO5W4owRAIgVwijfgYct4Ra6vuPE6Ztx3FiyGppYI_XZ8beLn1I3j0CIF-0HAYdsDyo85o9JC71NyYiFwWoqoffh0JTMFverv-0" },
+            { date: '2022/08/15', title: 'ドナルドに選ばれる【ゆっくり実況】', url: 'https://ghostvideo.b-cdn.net/chimurai/njEc4vGV5t0.mp4' },
+            { date: '不明', title: '卵に繰り返される 【ゆっくり実況】', url: 'https://web.archive.org/web/20230818115103id_/https://rr3---sn-o097znsl.googlevideo.com/videoplayback?expire=1692381045&ei=FVvfZLydNYKIkwbq2abICQ&ip=207.241.233.94&id=o-AJauMT63i6kZ2DOqydsaETRT9l-lHH0403oBIkp5osSw&itag=22&source=youtube&requiressl=yes&spc=UWF9f1Y2osl91CGpaLU_LC7U_ICKi7c&vprv=1&svpuc=1&mime=video%2Fmp4&cnr=14&ratebypass=yes&dur=306.921&lmt=1657896726134440&fexp=24007246,24363393,24472440&beids=24472440&c=ANDROID&txp=5532434&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Ccnr%2Cratebypass%2Cdur%2Clmt&sig=AOq0QJ8wRAIgDV86H8VwkuN2aI5J9QqGNd1pfSrY4xa8dL8VmorsUZMCIB8qPvC9t7dvq2tkY3ATV8h0q41GPE4eq0MBvF0gZbkv&video_id=m74UbRxfQYY&redirect_counter=1&rm=sn-o09sd7s&req_id=36a7006f9a57a3ee&cms_redirect=yes&cmsv=e&ipbypass=yes&mh=-q&mip=207.241.235.229&mm=31&mn=sn-o097znsl&ms=au&mt=1692359121&mv=m&mvi=3&pl=20&lsparams=ipbypass,mh,mip,mm,mn,ms,mv,mvi,pl&lsig=AG3C_xAwRAIgW-N6leQRxHYqgRcge1oObCmD1ueqe5VgYQ3BjRg1wegCIBCx22VIzuCdVVAW3vQW19chengObPnDNkMK1_OX3R5i' },
+            { date: '2023/02/28', title: 'おい、俺から逃げるんじゃねえよ。', url: 'https://ghostvideo.b-cdn.net/chimurai/jnkE7o1SXcU.mp4' },
+            { date: '不明', title: '割と全員から嫌われてることに気づいた霊夢', url: 'https://web.archive.org/web/20230401045459id_/https://rr2---sn-a5msenll.googlevideo.com/videoplayback?expire=1680346478&ei=DrknZLPlB5uikgbV5KOYCg&ip=207.241.235.172&id=o-AKfabxWe3SnvgHCQx2SYmcEJZEgKsfuG5b1GY7YzwLvK&itag=22&source=youtube&requiressl=yes&spc=99c5CQ_qYDjq5cfe0bBNJP8xP-uH-Go&vprv=1&svpuc=1&mime=video%2Fmp4&cnr=14&ratebypass=yes&dur=589.252&lmt=1680284731714138&fexp=24007246&c=ANDROID&txp=5532434&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Ccnr%2Cratebypass%2Cdur%2Clmt&sig=AOq0QJ8wRQIhAK6VBxMXH66YDJQHHpV8onnFp_bD4v3wrZg4cryVLAeAAiAdwT241V9nzs8Jv7jSKQHjbDTC8wSvbVCp6-YBOGQ7Cg%3D%3D&video_id=UPrTTnaRaw4&redirect_counter=1&cm2rm=sn-n4vsl7l&req_id=39ac0e5cd014a3ee&cms_redirect=yes&cmsv=e&mh=yM&mip=207.241.235.229&mm=34&mn=sn-a5msenll&ms=ltu&mt=1680324771&mv=m&mvi=2&pl=20&lsparams=mh,mip,mm,mn,ms,mv,mvi,pl&lsig=AG3C_xAwRQIgfhstgca6wevlNbONgMOmvIBclo4h9XB3_iU6sGa6hk0CIQDTdChaL0T5Ech8EZwnRYm1UThLmLDMbLm_nzQrdyDgiA%3D%3D' },
+            { date: '不明', title: '弾が出るまでロシアンルーレットしてみた', url: 'https://web.archive.org/web/20230507130906id_/https://rr1---sn-a5mekn6z.googlevideo.com/videoplayback?expire=1683486523&ei=26JXZPCZDoWUsfIPwoSiQA&ip=207.241.235.172&id=o-AGPQe9PozzywhuOYRctj-Vm_9iPXcM9QSiMHWzwSzeI5&itag=22&source=youtube&requiressl=yes&spc=qEK7B83BO_u-QM8FL5c_A3c8GLAetoU&vprv=1&svpuc=1&mime=video%2Fmp4&cnr=14&ratebypass=yes&dur=586.257&lmt=1675969643546295&fexp=24007246&c=ANDROID&txp=5532434&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Ccnr%2Cratebypass%2Cdur%2Clmt&sig=AOq0QJ8wRQIgDV3q1-9gDaJwxD7tJWgZUiMY1c9q-nWhVscoHKOzSwgCIQC2dkfKqo1Zwp_rhzAt7E_ueg-vqU6v-esbznSmhCIymA%3D%3D&video_id=l-NCzShd5H0&redirect_counter=1&cm2rm=sn-n4vlk76&req_id=8aeacd04e0f2a3ee&cms_redirect=yes&cmsv=e&mh=Qu&mip=207.241.236.59&mm=34&mn=sn-a5mekn6z&ms=ltu&mt=1683464683&mv=m&mvi=1&pl=20&lsparams=mh,mip,mm,mn,ms,mv,mvi,pl&lsig=AG3C_xAwRQIgF6o5ui0je2XOnXcIHBPmimOz7NveVmWtQcdG7rfPuzACIQDHKA6hg8iyhmgTi-_agx8CuisnnPHHIuObTldCLhV3Gw%3D%3D' },
+            { date: '不明', title: 'BackRoomsを破壊してみた', url: 'https://web.archive.org/web/20230220085959id_/https://rr3---sn-a5msenek.googlevideo.com/videoplayback?expire=1676905189&ei=hTbzY8r6J96PsfIPpfi60A0&ip=207.241.235.173&id=o-AIlXPbt3mxYQbuy5U6lJwU-wcNNoZaU4M5p-I9XXJku9&itag=22&source=youtube&requiressl=yes&pcm2=no&spc=H3gIhsmE0HMIDZK7ZrHLz8l5XnWhE2w&vprv=1&svpuc=1&mime=video%2Fmp4&cnr=14&ratebypass=yes&dur=658.866&lmt=1676487051999422&fexp=24007246&c=ANDROID&txp=5532434&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cpcm2%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Ccnr%2Cratebypass%2Cdur%2Clmt&sig=AOq0QJ8wRAIgGmRc32zv_8Z6DJGxU-uPmeYHviVIlAQ6hwB5w2cFTCACIBZaO-kQ031xLZzIoziwlcNrgk2yLfnF-sCS8dOPPwW4&video_id=87GRIwID_fA&rm=sn-n4vs776&req_id=734ea1a4120ea3ee&ipbypass=yes&redirect_counter=2&cm2rm=sn-o09ly7z&cms_redirect=yes&cmsv=e&mh=d9&mip=207.241.229.236&mm=34&mn=sn-a5msenek&ms=ltu&mt=1676883405&mv=m&mvi=3&pl=20&lsparams=ipbypass,mh,mip,mm,mn,ms,mv,mvi,pl&lsig=AG3C_xAwRAIgDfngqxS84InIn-gfOo3gb6tlSZfAZszPtbm0UtuR93ACIBiCn9Q7rvYK8xEWVmwSAHf9ydZLV78SL-2OpRHH-OiA' }
+
+          
+        ];
+
+        // { date: '2', title: 't', url: 'pp' },
+        const videoList = document.getElementById('videoList');
+        const searchInput = document.getElementById('searchInput');
+
+        function displayVideos(videos) {
+            videos.sort((a, b) => {
+                // "不明な"を最後にする
+                if (a.date === "不明") return 1;
+                if (b.date === "不明") return -1;
+                // 通常の日付を昇順にソート
+                // 降順にするならスロットをbに
+                return new Date(a.date) - new Date(b.date);
+            });
+
+            videoList.innerHTML = '';
+            videos.forEach(video => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                const link = document.createElement('a');
+                link.href = video.url;
+                link.textContent = `${video.date} - ${video.title}`;
+                card.appendChild(link);
+                videoList.appendChild(card);
+                setTimeout(() => card.classList.add('show'), 100);
+            });
+        }
+
+
+
+
+
+        searchInput.addEventListener('input', function () {
+            const query = searchInput.value.toLowerCase();
+            const filteredVideos = videoData.filter(video => video.title.toLowerCase().includes(query));
+            displayVideos(filteredVideos);
+        });
+
+        displayVideos(videoData);
+
+        const videoForm = document.getElementById('videoForm');
+        videoForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const date = document.getElementById('date').value;
+            const title = document.getElementById('title').value;
+            const url = document.getElementById('url').value;
+
+            const videoDataToSave = {
+                date: date,
+                title: title,
+                url: url
+            };
+
+            fetch('/save-video', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(videoDataToSave)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                })
+                .catch(error => {
+                    alert('保存に失敗しました');
+                });
+        });
+
+    </script>
+
+</body>
+
+</html>
