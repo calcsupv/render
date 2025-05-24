@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: #fff;
+    margin: 24px 16px;
+    color: #222;
+  }
+
+  #searchArea {
+    display: flex;
+    flex-direction: column;
+    max-width: 580px;
+    margin: 0 auto 32px;
+    gap: 8px;
+  }
+
+  #search {
+    font-size: 16px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline-offset: 2px;
+    flex-grow: 1;
+  }
+
+  #search:focus {
+    border-color: #0078d7;
+    box-shadow: 0 0 5px rgba(0, 120, 215, 0.5);
+  }
+
+  #controlsRow {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  #sortOrder,
+  #toggleUnknown {
+    font-size: 14px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background: #fff;
+    cursor: pointer;
+    outline-offset: 2px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    flex-shrink: 0;
+    min-width: 110px;
+  }
+
+  #toggleUnknown {
+    min-width: auto;
+    padding: 6px 12px;
+  }
+
+  #sortOrder:focus,
+  #toggleUnknown:focus {
+    border-color: #0078d7;
+    box-shadow: 0 0 5px rgba(0, 120, 215, 0.5);
+    outline: none;
+  }
+
+  #videoList {
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .card {
+    display: flex;
+    background: #fefefe;
+    border-bottom: 1px solid #eee;
+    padding: 12px 8px;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    align-items: center;
+    gap: 12px;
+    transition: background-color 0.15s ease;
+    position: relative;
+  }
+
+  .card:hover {
+    background-color: #f0f8ff;
+  }
+
+  .thumb {
+    width: 120px;
+    height: 68px;
+    flex-shrink: 0;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #ddd;
+  }
+
+  .thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .info {
+    flex-grow: 1;
+    padding-right: 45px;
+  }
+
+  .title {
+    font-weight: 600;
+    font-size: 16px;
+    margin: 0 0 4px 0;
+    line-height: 1.2;
+  }
+
+  .date {
+    font-size: 12px;
+    color: #777;
+  }
+
+  .version {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    font-size: 12px;
+    color: #f2f2f2;
+    background: rgba(32, 27, 27, 0.3);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    padding: 5px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .contact {
+    text-align: center;
+    margin: 60px 0 0;
+    font-size: 16px;
+    color: #666;
+  }
+
+  .status-indicator {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 0 3px rgba(0,0,0,0.2);
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+
+  .status-0 { background-color: orange; }
+  .status-1 { background-color: limegreen; }
+  .status-other { background-color: gray; }
+
+  .ghost-icon {
+    position: absolute;
+    top: 8px;
+    right: 28px;
+    width: 16px;
+    height: 20px;
+    background: #ccc;
+    border-radius: 50% 50% 30% 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .ghost-icon::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 6px;
+    background: #ccc;
+    border-radius: 50% 50% 0 0;
+  }
+
+  .ghost-icon .eye {
+    width: 3px;
+    height: 3px;
+    background: #000;
+    border-radius: 50%;
+    position: absolute;
+    top: 6px;
+  }
+
+  .ghost-icon .eye.left { left: 4px; }
+  .ghost-icon .eye.right { right: 4px; }
+
+  @media (prefers-color-scheme: dark) {
+    body { background: #121212; color: #eee; }
+    #search { background: #222; border-color: #555; color: #eee; }
+    #search:focus { border-color: #3b82f6; box-shadow: 0 0 8px rgba(59,130,246,0.7); }
+    #sortOrder, #toggleUnknown {
+      background: #222; border-color: #555; color: #eee;
+    }
+    #sortOrder:focus, #toggleUnknown:focus {
+      border-color: #3b82f6; box-shadow: 0 0 8px rgba(59,130,246,0.7);
+    }
+    .card { background: #1e1e1e; border-bottom: 1px solid #333; color: #ddd; }
+    .card:hover { background-color: #2a2a2a; }
+    .thumb { background: #333; }
+    .title { color: #ddd; }
+    .date { color: #aaa; }
+    .contact { color: #aaa; }
+  }
+</style>
+</head>
+<body>
+
+<div class="version">v1.2.6</div>
+
+<div id="searchArea" role="search">
+  <input id="search" type="text" placeholder="動画タイトルで検索" aria-label="動画タイトルで検索" autocomplete="off" />
+  <div id="controlsRow">
+    <select id="sortOrder" aria-label="日付の並び順">
+      <option value="desc">新しい順</option>
+      <option value="asc">古い順</option>
+    </select>
+    <button id="toggleUnknown" aria-pressed="false" title="不明な日付の動画を表示/非表示切替">不明なを表示</button>
+  </div>
+</div>
+
+<div id="videoList" role="list" aria-live="polite"></div>
+
+<div class="contact">
+  お問い合わせ: <a href="mailto:ii45iiy@gmail.com">email</a>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const container = document.getElementById('videoList');
+  const searchInput = document.getElementById('search');
+  const sortSelect = document.getElementById('sortOrder');
+  const toggleUnknownBtn = document.getElementById('toggleUnknown');
+  let videos = [];
+  let showUnknown = false;
+
+  async function loadVideos() {
+    try {
+      const res = await fetch('/date/date.json');
+      if (!res.ok) throw new Error('読み込み失敗');
+      videos = await res.json();
+      renderVideos();
+    } catch (err) {
+      container.innerHTML = '<p style="text-align:center;color:#f00;">動画データの読み込みに失敗しました。</p>';
+      console.error(err);
+    }
+  }
+
+  function renderVideos() {
+    const filter = searchInput.value.trim().toLowerCase();
+    const sort = sortSelect.value;
+
+    let filtered = videos.filter(v => v.title.toLowerCase().includes(filter));
+    if (!showUnknown) {
+      filtered = filtered.filter(v => v.date !== '不明');
+    }
+
+    filtered.sort((a, b) => {
+      if (a.date === '不明' && b.date === '不明') return 0;
+      if (a.date === '不明') return 1;
+      if (b.date === '不明') return -1;
+      return sort === 'desc'
+        ? new Date(b.date) - new Date(a.date)
+        : new Date(a.date) - new Date(b.date);
+    });
+
+    container.innerHTML = '';
+
+    if (filtered.length === 0) {
+      const p = document.createElement('p');
+      p.textContent = '該当する動画はありません。';
+      p.style.textAlign = 'center';
+      p.style.color = '#666';
+      container.appendChild(p);
+      return;
+    }
+
+    filtered.forEach(video => {
+      const a = document.createElement('a');
+      a.href = video.url;
+      a.rel = 'noopener noreferrer';
+      a.className = 'card';
+      a.setAttribute('role', 'listitem');
+      a.setAttribute('tabindex', '0');
+
+      let statusClass = 'status-other';
+      if (video.status === 0) statusClass = 'status-0';
+      else if (video.status === 1) statusClass = 'status-1';
+
+      a.innerHTML = `
+        <div class="thumb"><img src="${video.img || ''}" alt="" loading="lazy" /></div>
+        <div class="info">
+          <p class="title">${video.title}</p>
+          <p class="date">${video.date}</p>
+        </div>
+        <div class="status-indicator ${statusClass}" title="${video.status === 0 ? 'オフライン' : video.status === 1 ? 'オンライン' : '状態不明'}"></div>
+        ${video.url.includes('ghost') ? `
+          <div class="ghost-icon">
+            <div class="eye left"></div>
+            <div class="eye right"></div>
+          </div>` : ''}
+      `;
+
+      container.appendChild(a);
+    });
+  }
+
+  searchInput.addEventListener('input', renderVideos);
+  sortSelect.addEventListener('change', renderVideos);
+  toggleUnknownBtn.addEventListener('click', () => {
+    showUnknown = !showUnknown;
+    toggleUnknownBtn.setAttribute('aria-pressed', showUnknown);
+    toggleUnknownBtn.textContent = showUnknown ? '不明なを非表示' : '不明なを表示';
+    renderVideos();
+  });
+
+  loadVideos();
+
+  const socket = io();
+  socket.on('update-videos', () => {
+    loadVideos();
+  });
+</script>
+
+</body>
+</html>
