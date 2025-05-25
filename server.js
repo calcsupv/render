@@ -66,7 +66,6 @@ fastify.get("/date/date.json", async (request, reply) => {
 const startServer = async () => {
   try {
     await fastify.listen({ port: PORT, host: "0.0.0.0" });
-    console.log(`Server listening on port ${PORT}`);
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
@@ -83,8 +82,6 @@ const io = new Server(fastify.server, {
 });
 
 io.on("connection", (socket) => {
-  console.log("クライアント接続:", socket.id);
-
   socket.on("save-video", async (videoInfo) => {
     if (!videoInfo.title || !videoInfo.url) {
       socket.emit("save-video-error", { error: "タイトルとURLは必須です" });
@@ -94,12 +91,10 @@ io.on("connection", (socket) => {
       await saveVideoInfo(videoInfo);
       socket.emit("save-video-success", { message: "動画情報が保存されました" });
     } catch (e) {
-      //console.error("保存処理エラー:", e);
       socket.emit("save-video-error", { error: "保存に失敗しました" });
     }
   });
 
   socket.on("disconnect", () => {
-    console.log("クライアント切断:", socket.id);
   });
 });
