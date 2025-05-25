@@ -1,6 +1,7 @@
 const fastify = require("fastify")({
-  logger: true,
+  logger: { level: "error" }
 });
+
 const path = require("path");
 const fs = require("fs").promises;
 const fssync = require("fs");
