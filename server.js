@@ -11,16 +11,14 @@ const { Server } = require("socket.io");
 const videoSaveDir = path.join(__dirname, "date");
 const videoSavePath = path.join(videoSaveDir, "date.json");
 
-// 静的ファイル用 public フォルダ設定
+// 静的フォルダ設定
 fastify.register(fastifyStatic, {
   root: path.join(__dirname, "public"),
-  prefix: "/", // ルート配下に公開
+  prefix: "/",
 });
 
-// Render等で使うポート指定
 const PORT = process.env.PORT || 3000;
 
-// ディレクトリ・ファイルの存在確認と初期化
 async function ensureDirectoryAndFile() {
   if (!fssync.existsSync(videoSaveDir)) {
     await fs.mkdir(videoSaveDir);
@@ -29,7 +27,6 @@ async function ensureDirectoryAndFile() {
   try {
     await fs.access(videoSavePath);
   } catch {
-    // ファイルがなければ空配列で初期化
     await fs.writeFile(videoSavePath, "[]", "utf8");
   }
 }
@@ -51,12 +48,10 @@ async function saveVideoInfo(videoInfo) {
   await fs.writeFile(videoSavePath, JSON.stringify(videos, null, 2));
 
   console.log("動画情報が保存されました:", videoSavePath);
-
-  // クライアント全員に通知
   io.emit("update-videos");
 }
 
-// 動的に動画データを返すAPIエンドポイント
+// 動画データ
 fastify.get("/date/date.json", async (request, reply) => {
   try {
     const jsonStr = await fs.readFile(videoSavePath, "utf8");
@@ -67,7 +62,6 @@ fastify.get("/date/date.json", async (request, reply) => {
   }
 });
 
-// サーバ起動（Fastify v4/v5対応）
 // listenの引数はオブジェクト指定推奨
 const startServer = async () => {
   try {
@@ -100,7 +94,7 @@ io.on("connection", (socket) => {
       await saveVideoInfo(videoInfo);
       socket.emit("save-video-success", { message: "動画情報が保存されました" });
     } catch (e) {
-      console.error("保存処理エラー:", e);
+      //console.error("保存処理エラー:", e);
       socket.emit("save-video-error", { error: "保存に失敗しました" });
     }
   });
