@@ -26,21 +26,22 @@
     border-radius: 4px;
     outline-offset: 2px;
     flex-grow: 1;
+    transition: all 0.3s ease;
   }
 
   #search:focus {
     border-color: #0078d7;
     box-shadow: 0 0 5px rgba(0, 120, 215, 0.5);
+    transform: translateY(-1px);
   }
 
-  #controlsRow {
+  #controls {
     display: flex;
     gap: 12px;
     align-items: center;
   }
 
-  #sortOrder,
-  #toggleUnknown {
+  #sort, #toggle {
     font-size: 14px;
     padding: 6px 8px;
     border-radius: 4px;
@@ -48,29 +49,29 @@
     background: #fff;
     cursor: pointer;
     outline-offset: 2px;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s ease;
     flex-shrink: 0;
     min-width: 110px;
   }
 
-  #toggleUnknown {
+  #toggle {
     min-width: auto;
     padding: 6px 12px;
   }
 
-  #sortOrder:focus,
-  #toggleUnknown:focus {
+  #sort:focus, #toggle:focus {
     border-color: #0078d7;
     box-shadow: 0 0 5px rgba(0, 120, 215, 0.5);
     outline: none;
+    transform: translateY(-1px);
   }
 
-  #videoList {
+  #videos {
     max-width: 520px;
     margin: 0 auto;
   }
 
-  .card {
+  .vid {
     display: flex;
     background: #fefefe;
     border-bottom: 1px solid #eee;
@@ -80,12 +81,16 @@
     color: inherit;
     align-items: center;
     gap: 12px;
-    transition: background-color 0.15s ease;
+    transition: all 0.3s ease;
     position: relative;
+    transform-origin: center;
   }
 
-  .card:hover {
+  .vid:hover {
     background-color: #f0f8ff;
+    transform: translateY(-3px) scale(1.01);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    z-index: 1;
   }
 
   .thumb {
@@ -95,12 +100,24 @@
     border-radius: 4px;
     overflow: hidden;
     background: #ddd;
+    transition: all 0.4s ease;
+    position: relative;
+  }
+
+  .vid:hover .thumb {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
   }
 
   .thumb img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .vid:hover .thumb img {
+    transform: scale(1.1);
   }
 
   .info {
@@ -113,14 +130,26 @@
     font-size: 16px;
     margin: 0 0 4px 0;
     line-height: 1.2;
+    transition: all 0.3s ease;
+  }
+
+  .vid:hover .title {
+    color: #0078d7;
+    transform: translateX(2px);
   }
 
   .date {
     font-size: 12px;
     color: #777;
+    transition: all 0.3s ease;
   }
 
-  .version {
+  .vid:hover .date {
+    color: #555;
+    transform: translateX(2px);
+  }
+
+  .ver {
     position: fixed;
     bottom: 10px;
     right: 10px;
@@ -134,6 +163,12 @@
     border: 1px solid rgba(0, 0, 0, 0.1);
     z-index: 9999;
     pointer-events: none;
+    transition: all 0.5s ease;
+  }
+
+  .ver:hover {
+    background: rgba(32, 27, 27, 0.5);
+    transform: scale(1.05);
   }
 
   .contact {
@@ -141,9 +176,26 @@
     margin: 60px 0 0;
     font-size: 16px;
     color: #666;
+    transition: all 0.3s ease;
   }
 
-  .status-indicator {
+  .contact:hover {
+    color: #333;
+    transform: translateY(-2px);
+  }
+
+  .contact a {
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .contact a:hover {
+    color: #0078d7;
+    text-decoration: underline;
+  }
+
+  .stat {
     width: 14px;
     height: 14px;
     border-radius: 50%;
@@ -152,13 +204,19 @@
     position: absolute;
     top: 10px;
     right: 10px;
+    transition: all 0.3s ease;
   }
 
-  .status-0 { background-color: orange; }
-  .status-1 { background-color: limegreen; }
-  .status-other { background-color: gray; }
+  .vid:hover .stat {
+    transform: scale(1.3);
+    box-shadow: 0 0 10px currentColor;
+  }
 
-  .ghost-icon {
+  .s0 { background-color: orange; }
+  .s1 { background-color: limegreen; }
+  .s2 { background-color: gray; }
+
+  .ghost {
     position: absolute;
     top: 8px;
     right: 28px;
@@ -169,9 +227,15 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: all 0.3s ease;
   }
 
-  .ghost-icon::before {
+  .vid:hover .ghost {
+    transform: translateY(-3px) rotate(5deg);
+    filter: brightness(1.2);
+  }
+
+  .ghost::before {
     content: "";
     position: absolute;
     bottom: 0;
@@ -179,21 +243,31 @@
     height: 6px;
     background: #ccc;
     border-radius: 50% 50% 0 0;
+    transition: all 0.3s ease;
   }
 
-  .ghost-icon .eye {
+  .vid:hover .ghost::before {
+    height: 8px;
+  }
+
+  .ghost .eye {
     width: 3px;
     height: 3px;
     background: #000;
     border-radius: 50%;
     position: absolute;
     top: 6px;
+    transition: all 0.3s ease;
   }
 
-  .ghost-icon .eye.left { left: 4px; }
-  .ghost-icon .eye.right { right: 4px; }
+  .vid:hover .ghost .eye {
+    transform: translateY(-2px);
+  }
 
-  .loading-overlay {
+  .ghost .l { left: 4px; }
+  .ghost .r { right: 4px; }
+
+  .load {
     position: fixed;
     top: 0;
     left: 0;
@@ -208,13 +282,10 @@
     -webkit-backdrop-filter: blur(0px);
     opacity: 0;
     pointer-events: none;
-    transition: 
-      opacity 0.3s ease-out,
-      backdrop-filter 0.4s ease-out,
-      background 0.3s ease-out;
+    transition: all 0.4s ease-out;
   }
 
-  .loading-overlay.active {
+  .load.on {
     opacity: 1;
     background: rgba(0,0,0,0.5);
     backdrop-filter: blur(3px);
@@ -222,7 +293,7 @@
     pointer-events: auto;
   }
 
-  .loading-spinner {
+  .spin {
     width: 50px;
     height: 50px;
     border: 5px solid rgba(243, 243, 243, 0.3);
@@ -231,10 +302,10 @@
     animation: spin 1s linear infinite;
     opacity: 0;
     transform: scale(0.8);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition: all 0.3s ease;
   }
 
-  .loading-overlay.active .loading-spinner {
+  .load.on .spin {
     opacity: 1;
     transform: scale(1);
   }
@@ -244,28 +315,28 @@
     100% { transform: rotate(360deg); }
   }
 
-  .loading-message {
+  .msg {
     color: white;
     margin-top: 15px;
     text-align: center;
     font-size: 16px;
     opacity: 0;
     transform: translateY(10px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition: all 0.3s ease;
   }
 
-  .loading-overlay.active .loading-message {
+  .load.on .msg {
     opacity: 1;
     transform: translateY(0);
   }
 
-  .loading-content {
+  .load-ctn {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
-  .card-loading {
+  .card-load {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -281,20 +352,17 @@
     gap: 10px;
     opacity: 0;
     pointer-events: none;
-    transition: 
-      opacity 0.2s ease-out,
-      transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28),
-      background 0.3s ease-out;
+    transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
   }
 
-  .card-loading.active {
+  .card-load.on {
     opacity: 1;
     background: rgba(0,0,0,0.8);
     transform: translate(-50%, -50%) scale(1);
     pointer-events: auto;
   }
 
-  .card-loading-spinner {
+  .card-spin {
     width: 30px;
     height: 30px;
     border: 3px solid rgba(243, 243, 243, 0.3);
@@ -302,69 +370,243 @@
     border-radius: 50%;
     animation: spin 1s linear infinite;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: all 0.3s ease;
   }
 
-  .card-loading.active .card-loading-spinner {
+  .card-load.on .card-spin {
     opacity: 1;
+  }
+
+  /* FAQ */
+  .faq {
+    max-width: 520px;
+    margin: 40px auto;
+  }
+
+  .faq-itm {
+    margin-bottom: 15px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+  }
+
+  .faq-itm:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+  }
+
+  .faq-btn {
+    width: 100%;
+    padding: 18px 24px;
+    background: #f5f5f5;
+    border: none;
+    text-align: left;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+  }
+
+  .faq-btn:hover {
+    background: #e9e9e9;
+    padding-left: 28px;
+  }
+
+  .faq-btn::after {
+    content: '+';
+    font-size: 24px;
+    transition: all 0.3s ease;
+  }
+
+  .faq-btn.on {
+    background: #e0e0e0;
+  }
+
+  .faq-btn.on::after {
+    transform: rotate(45deg);
+    color: #0078d7;
+  }
+
+  .faq-ctn {
+    max-height: 0;
+    overflow: hidden;
+    background: #fafafa;
+    transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .faq-ctn.on {
+    max-height: 500px;
+    padding: 20px 24px;
+  }
+
+  .faq-q {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+
+  .faq-a {
+    color: #555;
+    line-height: 1.6;
+    font-size: 15px;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.4s ease 0.2s;
+  }
+
+  .faq-ctn.on .faq-a {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   @media (prefers-color-scheme: dark) {
     body { background: #121212; color: #eee; }
     #search { background: #222; border-color: #555; color: #eee; }
     #search:focus { border-color: #3b82f6; box-shadow: 0 0 8px rgba(59,130,246,0.7); }
-    #sortOrder, #toggleUnknown {
+    #sort, #toggle {
       background: #222; border-color: #555; color: #eee;
     }
-    #sortOrder:focus, #toggleUnknown:focus {
+    #sort:focus, #toggle:focus {
       border-color: #3b82f6; box-shadow: 0 0 8px rgba(59,130,246,0.7);
     }
-    .card { background: #1e1e1e; border-bottom: 1px solid #333; color: #ddd; }
-    .card:hover { background-color: #2a2a2a; }
+    .vid { background: #1e1e1e; border-bottom: 1px solid #333; color: #ddd; }
+    .vid:hover { background-color: #2a2a2a; }
     .thumb { background: #333; }
     .title { color: #ddd; }
     .date { color: #aaa; }
     .contact { color: #aaa; }
-    .loading-spinner, .card-loading-spinner {
+    .spin, .card-spin {
       border-top-color: #3b82f6;
     }
-    .loading-overlay.active {
+    .load.on {
       background: rgba(0,0,0,0.7);
     }
-    .card-loading.active {
+    .card-load.on {
       background: rgba(0,0,0,0.9);
+    }
+    
+    /* ダークモード */
+    .faq-btn {
+      background: #2a2a2a;
+      color: #eee;
+    }
+    .faq-btn:hover {
+      background: #333;
+    }
+    .faq-btn.on {
+      background: #3a3a3a;
+    }
+    .faq-ctn {
+      background: #252525;
+    }
+    .faq-q {
+      color: #eee;
+    }
+    .faq-a {
+      color: #ccc;
+    }
+    .faq-itm:hover {
+      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
     }
   }
 </style>
 </head>
 <body>
 
-<div id="loadingOverlay" class="loading-overlay">
-  <div class="loading-content">
-    <div class="loading-spinner"></div>
-    <div class="loading-message">読み込み中...</div>
+<div id="load" class="load">
+  <div class="load-ctn">
+    <div class="spin"></div>
+    <div class="msg">読み込み中...</div>
   </div>
 </div>
 
-<div id="cardLoading" class="card-loading">
-  <div class="card-loading-spinner"></div>
+<div id="cardLoad" class="card-load">
+  <div class="card-spin"></div>
   <div>動画を読み込んでいます...</div>
 </div>
 
-<div class="version">v1.2.6</div>
+<div class="ver">v1.2.6-glitch</div>
 
 <div id="searchArea" role="search">
   <input id="search" type="text" placeholder="動画タイトルで検索" aria-label="動画タイトルで検索" autocomplete="off" />
-  <div id="controlsRow">
-    <select id="sortOrder" aria-label="日付の並び順">
+  <div id="controls">
+    <select id="sort" aria-label="日付の並び順">
       <option value="desc">新しい順</option>
       <option value="asc">古い順</option>
     </select>
-    <button id="toggleUnknown" aria-pressed="false" title="不明な日付の動画を表示/非表示切替">不明なを表示</button>
+    <button id="toggle" aria-pressed="false" title="不明な日付の動画を表示/非表示切替">不明なを表示</button>
   </div>
 </div>
 
-<div id="videoList" role="list" aria-live="polite"></div>
+<div id="videos" role="list" aria-live="polite"></div>
+  
+<div class="faq">
+  <div class="faq-itm">
+    <button class="faq-btn" aria-expanded="false">
+      <span class="faq-q">Q. ウイルスはないんですか？</span>
+    </button>
+    <div class="faq-ctn">
+      <div class="faq-a">
+        A. どこを見てそう思ったのか。すべてのコードを
+        <a href="https://github.com/calcsupv/render" target="_blank">github</a>
+        で公開してます
+        それでも心配ならF12で見れば
+      </div>
+    </div>
+  </div>
+
+  <div class="faq-itm">
+    <button class="faq-btn" aria-expanded="false">
+      <span class="faq-q">Q. このサイトは何ですか？</span>
+    </button>
+    <div class="faq-ctn">
+      <div class="faq-a">A. 動画のアーカイブされているリンクをまとめたサイトです</div>
+    </div>
+  </div>
+
+  <div class="faq-itm">
+    <button class="faq-btn" aria-expanded="false">
+      <span class="faq-q">Q. サムネが表示されないです</span>
+    </button>
+    <div class="faq-ctn">
+      <div class="faq-a">A. めんどかった</div>
+    </div>
+  </div>
+
+  <div class="faq-itm">
+    <button class="faq-btn" aria-expanded="false">
+      <span class="faq-q">Q. みたい動画がありません</span>
+    </button>
+    <div class="faq-ctn">
+      <div class="faq-a">A. アーカイブされてないから絶対無理。見れない。あとyoutubeのチャンネル削除は復元できない</div>
+    </div>
+  </div>
+
+  <div class="faq-itm">
+    <button class="faq-btn" aria-expanded="false">
+      <span class="faq-q">Q. どうやって動画見つけてるの</span>
+    </button>
+    <div class="faq-ctn">
+      <div class="faq-a">A. 敬語使え。
+        https://findyoutubevideo.thetechrobo.ca/リンクを入力で見つけれる　https://filmot.com/channel/UCFEt0_aIkl1PWCJuCx8JClg/0/FPSgamer201リンクがあるサイト</div>
+    </div>
+  </div>
+
+  <div class="faq-itm">
+    <button class="faq-btn" aria-expanded="false">
+      <span class="faq-q">Q. なんでnode.js使ってるんですか？</span>
+    </button>
+    <div class="faq-ctn">
+      <div class="faq-a">管理しやすい、互換性ある</div>
+    </div>
+  </div>
+</div>
 
 <div class="contact">
   お問い合わせ: <a href="mailto:ii45iiy@gmail.com">email</a>
@@ -372,30 +614,58 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
-  const container = document.getElementById('videoList');
-  const searchInput = document.getElementById('search');
-  const sortSelect = document.getElementById('sortOrder');
-  const toggleUnknownBtn = document.getElementById('toggleUnknown');
-  const loadingOverlay = document.getElementById('loadingOverlay');
-  const cardLoading = document.getElementById('cardLoading');
+  const container = document.getElementById('videos');
+  const search = document.getElementById('search');
+  const sort = document.getElementById('sort');
+  const toggle = document.getElementById('toggle');
+  const load = document.getElementById('load');
+  const cardLoad = document.getElementById('cardLoad');
   let videos = [];
   let showUnknown = false;
 
-  function showLoading() {
-    loadingOverlay.classList.add('active');
+  document.querySelectorAll('.faq-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const item = this.parentElement;
+      const content = this.nextElementSibling;
+      
+      document.querySelectorAll('.faq-itm').forEach(other => {
+        if (other !== item) {
+          other.querySelector('.faq-btn').classList.remove('on');
+          other.querySelector('.faq-ctn').classList.remove('on');
+          other.querySelector('.faq-a').style.opacity = '0';
+          other.querySelector('.faq-a').style.transform = 'translateY(-10px)';
+        }
+      });
+
+      this.classList.toggle('on');
+      content.classList.toggle('on');
+      const isExpanded = this.getAttribute('aria-expanded') === 'true';
+      this.setAttribute('aria-expanded', !isExpanded);
+      
+      if (content.classList.contains('on')) {
+        setTimeout(() => {
+          content.querySelector('.faq-a').style.opacity = '1';
+          content.querySelector('.faq-a').style.transform = 'translateY(0)';
+        }, 200);
+      }
+    });
+  });
+
+  function showLoad() {
+    load.classList.add('on');
   }
 
-  function hideLoading() {
-    loadingOverlay.classList.remove('active');
+  function hideLoad() {
+    load.classList.remove('on');
   }
 
-  function showCardLoading() {
-    cardLoading.classList.add('active');
+  function showCardLoad() {
+    cardLoad.classList.add('on');
   }
 
   async function loadVideos() {
     try {
-      showLoading();
+      showLoad();
       const res = await fetch('/date/date.json');
       if (!res.ok) throw new Error('読み込み失敗');
       videos = await res.json();
@@ -404,13 +674,13 @@
       container.innerHTML = '<p style="text-align:center;color:#f00;">動画データの読み込みに失敗しました。</p>';
       console.error(err);
     } finally {
-      setTimeout(hideLoading, 0);
+      setTimeout(hideLoad, 0);
     }
   }
 
   function renderVideos() {
-    const filter = searchInput.value.trim().toLowerCase();
-    const sort = sortSelect.value;
+    const filter = search.value.trim().toLowerCase();
+    const sortVal = sort.value;
 
     let filtered = videos.filter(v => v.title.toLowerCase().includes(filter));
     if (!showUnknown) {
@@ -421,7 +691,7 @@
       if (a.date === '不明' && b.date === '不明') return 0;
       if (a.date === '不明') return 1;
       if (b.date === '不明') return -1;
-      return sort === 'desc'
+      return sortVal === 'desc'
         ? new Date(b.date) - new Date(a.date)
         : new Date(a.date) - new Date(b.date);
     });
@@ -441,13 +711,13 @@
       const a = document.createElement('a');
       a.href = video.url;
       a.rel = 'noopener noreferrer';
-      a.className = 'card';
+      a.className = 'vid';
       a.setAttribute('role', 'listitem');
       a.setAttribute('tabindex', '0');
 
-      let statusClass = 'status-other';
-      if (video.status === 0) statusClass = 'status-0';
-      else if (video.status === 1) statusClass = 'status-1';
+      let statusClass = 's2';
+      if (video.status === 0) statusClass = 's0';
+      else if (video.status === 1) statusClass = 's1';
 
       a.innerHTML = `
         <div class="thumb"><img src="${video.img || ''}" alt="" loading="lazy" /></div>
@@ -455,41 +725,40 @@
           <p class="title">${video.title}</p>
           <p class="date">${video.date}</p>
         </div>
-        <div class="status-indicator ${statusClass}" title="${video.status === 0 ? 'オフライン' : video.status === 1 ? 'オンライン' : '状態不明'}"></div>
+        <div class="stat ${statusClass}" title="${video.status === 0 ? 'オフライン' : video.status === 1 ? 'オンライン' : '状態不明'}"></div>
         ${video.url.includes('ghost') ? `
-          <div class="ghost-icon">
-            <div class="eye left"></div>
-            <div class="eye right"></div>
+          <div class="ghost">
+            <div class="eye l"></div>
+            <div class="eye r"></div>
           </div>` : ''}
       `;
       
       a.addEventListener('click', (e) => {
         e.preventDefault();
-        showCardLoading();
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            window.location.href = video.url;
-          });
-        });
+        showCardLoad();
+        setTimeout(() => {
+          window.location.href = video.url;
+        }, 300);
       });
 
       container.appendChild(a);
     });
   }
 
-  searchInput.addEventListener('input', renderVideos);
-  sortSelect.addEventListener('change', renderVideos);
-  toggleUnknownBtn.addEventListener('click', () => {
+  search.addEventListener('input', renderVideos);
+  sort.addEventListener('change', renderVideos);
+  toggle.addEventListener('click', () => {
     showUnknown = !showUnknown;
-    toggleUnknownBtn.setAttribute('aria-pressed', showUnknown);
-    toggleUnknownBtn.textContent = showUnknown ? '不明なを非表示' : '不明なを表示';
+    toggle.setAttribute('aria-pressed', showUnknown);
+    toggle.textContent = showUnknown ? '不明なを非表示' : '不明なを表示';
     renderVideos();
   });
+  
   document.addEventListener('DOMContentLoaded', () => {
     loadVideos();
     const socket = io();
     socket.on('update-videos', () => {
-      showLoading();
+      showLoad();
       loadVideos();
     });
   });
