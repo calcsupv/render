@@ -13,7 +13,7 @@
 │   └── date.json
 ├── server.js
 ├── package.json
-└── README.md  ← このファイル
+└── README.md
 ```
 
 ## 主要ファイルの説明
@@ -22,6 +22,6 @@
   - `index/`: HTMLファイル
     - `v1.html`, `v2.html`, `v3.html`: バージョンファイル
     - `date.json`: 日付データ
-- `date/date.json`: 日付データ
+- `date/date.json`: v1用
 - `server.js`: メインのサーバーアプリケーション
 - `package.json`: Node.jsプロジェクト設定ファイル
