@@ -21,7 +21,7 @@
 - `public/`: htmlファイルディレクトリ
   - `index/`: HTMLファイル
     - `v1.html`, `v2.html`, `v3.html`: バージョンファイル
-    - `date.json`: 日付データ
+    - `date.json`: 動画データ
 - `date/date.json`: v1用
 - `server.js`: メインのサーバーアプリケーション
 - `package.json`: Node.jsプロジェクト設定ファイル
