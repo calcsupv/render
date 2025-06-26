@@ -110,9 +110,9 @@ async function getVideoStats(videoId) {
   }
 }
 
-// ルート設定
+// バージョン
 fastify.get("/version.json", async (request, reply) => {
-  reply.send({ version: "v1.2.6-glitch" }); 
+  reply.send({ version: "v1.2.7-render" }); 
 });
 
 fastify.get("/date/date.json", async (request, reply) => {
