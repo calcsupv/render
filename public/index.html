@@ -1,55 +1,187 @@
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <title>thinck</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-    <style>
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        background-color: #ffffff;
-        overflow: hidden;
-        transition: background-color 0.3s;
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: #ffffff;
+      overflow: hidden;
+      transition: background-color 0.3s;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+    }
+
+    .modal.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-box {
+      background: #f8f8f8;
+      width: 270px;
+      border-radius: 13px;
+      overflow: hidden;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      transform: scale(0.9);
+      transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.3);
+      text-align: center;
+    }
+
+    .modal.active .modal-box {
+      transform: scale(1);
+    }
+
+    .modal-title {
+      font-weight: 600;
+      margin: 15px 15px 5px;
+      font-size: 17px;
+      color: #000;
+    }
+
+    .modal-msg {
+      margin: 0 15px 15px;
+      font-size: 13px;
+      color: #666;
+      line-height: 1.4;
+    }
+
+    .modal-btn-container {
+      display: flex;
+      border-top: 0.5px solid #d1d1d1;
+    }
+
+    .modal-btn {
+      flex: 1;
+      background: transparent;
+      color: #007aff;
+      border: none;
+      padding: 12px;
+      font-size: 17px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.1s;
+    }
+
+    .modal-btn:active {
+      background-color: rgba(0, 122, 255, 0.1);
+    }
+
+    .modal-btn:not(:last-child) {
+      border-right: 0.5px solid #d1d1d1;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      html, body {
+        background-color: #000;
       }
-
-      iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border: none;
-        opacity: 0;
-        transition: opacity 0.4s;
+      .modal-box {
+        background-color: #1c1c1e;
       }
-
-      @media (prefers-color-scheme: dark) {
-        html,
-        body {
-          background-color: #121212;
-        }
+      .modal-title {
+        color: #fff;
       }
-    </style>
-  </head>
-  <body>
-    <script>
-      alert("著作権的にほぼアウトなので自己責任で見てください。\nv1.2.6\n めっちゃでかいうんこでたわら\n@kiyu4776");
+      .modal-msg {
+        color: #aaa;
+      }
+      .modal-btn-container {
+        border-top-color: #38383a;
+      }
+      .modal-btn {
+        color: #0a84ff;
+      }
+      .modal-btn:active {
+        background-color: rgba(10, 132, 255, 0.1);
+      }
+      .modal-btn:not(:last-child) {
+        border-right-color: #38383a;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="modal" id="modal">
+    <div class="modal-box">
+      <div class="modal-title"></div>
+    <div class="modal-msg">
+  著作権的にほぼアウトなので<br>
+  自己責任で見てください。<br><br>
+  <span id="version">バージョン取得中...</span><br>
+  @kiyu4776 @calcsupv<br>
+  変更予定リンク<br>
+  <a href="https://render-ln4r.onrender.com" target="_blank" style="color:#007aff; text-decoration: underline;">
+    https://render-ln4r.onrender.com
+  </a><br>
+<br>↓↓↓↓↓↓↓サポーとサーバー↓↓↓↓↓↓↓5人はいってくれた」<br>
+      <a href="https://discord.gg/UUEYtvXA4v" target="_blank" style="color:#007aff; text-decoration: underline;">
+    discordサーバ
+  </a>
+</div>
 
-      const iframe = document.createElement("iframe");
-      iframe.src = "index/v3.html";
-      iframe.onload = () => {
-        iframe.style.opacity = "1";
-      };
-      document.body.appendChild(iframe);
 
-      // fuck you
-      // https://findyoutubevideo.thetechrobo.ca/
-      //https://filmot.com/channel/UCFEt0_aIkl1PWCJuCx8JClg/0/FPSgamer201
-       //貴重な休日は選挙ポスターを隣人に配ることから始まる
-     
-    </script>
-  </body>
+
+      <div class="modal-btn-container">
+        <button class="modal-btn" id="modalBtn">了解</button>
+      </div>
+    </div>
+  </div>
+<iframe id="mainFrame" src="index/v4.html"></iframe>
+  <script>
+    const modal = document.getElementById('modal');
+    const modalBtn = document.getElementById('modalBtn');
+    const mainFrame = document.getElementById('mainFrame');
+    const versionEl = document.getElementById('version');
+
+fetch('/version.json')
+  .then(res => res.json())
+  .then(data => {
+    versionEl.textContent = data.version || '不明';
+  })
+  .catch(() => {
+    versionEl.textContent = '取得失敗';
+  });
+
+    setTimeout(() => {
+      modal.classList.add('active');
+    }, 100);
+
+    modalBtn.addEventListener('click', () => {
+      modal.classList.remove('active');
+      setTimeout(() => {
+        mainFrame.style.opacity = '1';
+      }, 300);
+    });
+  </script>
+</body>
 </html>
