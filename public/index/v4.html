@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+    
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #121212;
+      margin: 24px 16px;
+      color: #eee;
+    }
+
+    #searchArea {
+      display: flex;
+      flex-direction: column;
+      max-width: 580px;
+      margin: 0 auto 32px;
+      gap: 8px;
+    }
+
+    #search {
+      font-size: 16px;
+      padding: 8px 12px;
+      border: 1px solid #555;
+      border-radius: 4px;
+      outline-offset: 2px;
+      flex-grow: 1;
+      transition: all 0.3s ease;
+      background: #222;
+      color: #eee;
+    }
+
+    #search:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 8px rgba(59, 130, 246, 0.7);
+      transform: translateY(-1px);
+    }
+
+    #controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    #sort,
+    #toggle {
+      font-size: 14px;
+      padding: 6px 8px;
+      border-radius: 4px;
+      border: 1px solid #555;
+      background: #222;
+      color: #eee;
+      cursor: pointer;
+      outline-offset: 2px;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+      min-width: 110px;
+    }
+
+    #toggle {
+      min-width: auto;
+      padding: 6px 12px;
+    }
+
+    #sort:focus,
+    #toggle:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 8px rgba(59, 130, 246, 0.7);
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    #videos {
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .vid {
+      display: flex;
+      background: #1e1e1e;
+      border-bottom: 1px solid #333;
+      padding: 12px 8px;
+      cursor: pointer;
+      text-decoration: none;
+      color: #ddd;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.3s ease;
+      position: relative;
+      transform-origin: center;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .vid.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .vid:hover {
+      background-color: #2a2a2a;
+      transform: translateY(-3px) scale(1.01);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      z-index: 1;
+    }
+
+    .thumb {
+      width: 120px;
+      height: 68px;
+      flex-shrink: 0;
+      border-radius: 4px;
+      overflow: hidden;
+      background: #333;
+      transition: all 0.4s ease;
+      position: relative;
+    }
+
+    .vid:hover .thumb {
+      transform: scale(1.05);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .vid:hover .thumb img {
+      transform: scale(1.1);
+    }
+
+    .info {
+      flex-grow: 1;
+      padding-right: 45px;
+    }
+
+    .title {
+      font-weight: 600;
+      font-size: 16px;
+      margin: 0 0 4px 0;
+      line-height: 1.2;
+      transition: all 0.3s ease;
+      color: #ddd;
+    }
+
+    .vid:hover .title {
+      color: #3b82f6;
+      transform: translateX(2px);
+    }
+
+    .date {
+      font-size: 12px;
+      color: #aaa;
+      transition: all 0.3s ease;
+    }
+
+    .vid:hover .date {
+      color: #ddd;
+      transform: translateX(2px);
+    }
+
+    .ver {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      font-size: 12px;
+      color: #f2f2f2;
+      background: rgba(32, 27, 27, 0.5);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      padding: 5px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      z-index: 9999;
+      pointer-events: none;
+      transition: all 0.5s ease;
+    }
+
+    .ver:hover {
+      background: rgba(32, 27, 27, 0.7);
+      transform: scale(1.05);
+    }
+
+    .contact {
+      text-align: center;
+      margin: 60px 0 0;
+      font-size: 16px;
+      color: #aaa;
+      transition: all 0.3s ease;
+    }
+
+    .contact:hover {
+      color: #ddd;
+      transform: translateY(-2px);
+    }
+
+    .contact a {
+      color: inherit;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .contact a:hover {
+      color: #3b82f6;
+      text-decoration: underline;
+    }
+
+    .stat {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .vid:hover .stat {
+      transform: scale(1.3);
+      box-shadow: 0 0 10px currentColor;
+    }
+
+    .s0 {
+      background-color: orange;
+    }
+    .s1 {
+      background-color: limegreen;
+    }
+    .s2 {
+      background-color: gray;
+    }
+
+    .ghost {
+      position: absolute;
+      top: 8px;
+      right: 28px;
+      width: 16px;
+      height: 20px;
+      background: #555;
+      border-radius: 50% 50% 30% 30%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+
+    .vid:hover .ghost {
+      transform: translateY(-3px) rotate(5deg);
+      filter: brightness(1.2);
+    }
+
+    .ghost::before {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 6px;
+      background: #555;
+      border-radius: 50% 50% 0 0;
+      transition: all 0.3s ease;
+    }
+
+    .vid:hover .ghost::before {
+      height: 8px;
+    }
+
+    .ghost .eye {
+      width: 3px;
+      height: 3px;
+      background: #000;
+      border-radius: 50%;
+      position: absolute;
+      top: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .vid:hover .ghost .eye {
+      transform: translateY(-2px);
+    }
+
+    .ghost .l {
+      left: 4px;
+    }
+    .ghost .r {
+      right: 4px;
+    }
+
+    /* ロード画面スタイル */
+    .load {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.4s ease-out;
+    }
+
+    .load.on {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .wrapper {
+      width: 200px;
+      height: 60px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .circle {
+      width: 20px;
+      height: 20px;
+      position: absolute;
+      border-radius: 50%;
+      background-color: #3b82f6;
+      left: 15%;
+      transform-origin: 50%;
+      animation: circle7124 .5s alternate infinite ease;
+    }
+
+    @keyframes circle7124 {
+      0% {
+        top: 60px;
+        height: 5px;
+        border-radius: 50px 50px 25px 25px;
+        transform: scaleX(1.7);
+      }
+
+      40% {
+        height: 20px;
+        border-radius: 50%;
+        transform: scaleX(1);
+      }
+
+      100% {
+        top: 0%;
+      }
+    }
+
+    .circle:nth-child(2) {
+      left: 45%;
+      animation-delay: .2s;
+    }
+
+    .circle:nth-child(3) {
+      left: auto;
+      right: 15%;
+      animation-delay: .3s;
+    }
+
+    .shadow {
+      width: 20px;
+      height: 4px;
+      border-radius: 50%;
+      background-color: rgba(255,255,255,0.2);
+      position: absolute;
+      top: 62px;
+      transform-origin: 50%;
+      z-index: -1;
+      left: 15%;
+      filter: blur(1px);
+      animation: shadow046 .5s alternate infinite ease;
+    }
+
+    @keyframes shadow046 {
+      0% {
+        transform: scaleX(1.5);
+      }
+
+      40% {
+        transform: scaleX(1);
+        opacity: .7;
+      }
+
+      100% {
+        transform: scaleX(.2);
+        opacity: .4;
+      }
+    }
+
+    .shadow:nth-child(4) {
+      left: 45%;
+      animation-delay: .2s
+    }
+
+    .shadow:nth-child(5) {
+      left: auto;
+      right: 15%;
+      animation-delay: .3s;
+    }
+
+    .msg {
+      color: white;
+      margin-top: 80px;
+      text-align: center;
+      font-size: 16px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+    }
+
+    .load.on .msg {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .load-ctn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .card-load {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      background: rgba(30, 30, 30, 0);
+      color: white;
+      padding: 20px 30px;
+      border-radius: 8px;
+      z-index: 1001;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      border: 1px solid #444;
+    }
+
+    .card-load.on {
+      opacity: 1;
+      background: rgba(30, 30, 30, 0.95);
+      transform: translate(-50%, -50%) scale(1);
+      pointer-events: auto;
+    }
+
+    .card-spin {
+      width: 30px;
+      height: 30px;
+      border: 3px solid rgba(243, 243, 243, 0.3);
+      border-top: 3px solid #3b82f6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    .card-load.on .card-spin {
+      opacity: 1;
+    }
+    .faq {
+      max-width: 520px;
+      margin: 40px auto;
+    }
+
+    .faq-itm {
+      margin-bottom: 15px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s ease;
+    }
+
+    .faq-itm:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    }
+
+    .faq-btn {
+      width: 100%;
+      padding: 18px 24px;
+      background: #2a2a2a;
+      border: none;
+      text-align: left;
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s ease;
+      color: #eee;
+    }
+
+    .faq-btn:hover {
+      background: #333;
+      padding-left: 28px;
+    }
+
+    .faq-btn::after {
+      content: "+";
+      font-size: 24px;
+      transition: all 0.3s ease;
+    }
+
+    .faq-btn.on {
+      background: #3a3a3a;
+    }
+
+    .faq-btn.on::after {
+      transform: rotate(45deg);
+      color: #3b82f6;
+    }
+
+    .faq-ctn {
+      max-height: 0;
+      overflow: hidden;
+      background: #252525;
+      transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .faq-ctn.on {
+      max-height: 500px;
+      padding: 20px 24px;
+    }
+
+    .faq-q {
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #eee;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .faq-a {
+      color: #ccc;
+      line-height: 1.6;
+      font-size: 15px;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.4s ease 0.2s;
+    }
+
+    .faq-ctn.on .faq-a {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #videos.blur-mode .vid:not(.active-card) {
+      filter: blur(3px) brightness(0.5);
+      opacity: 0.6;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+
+    .vid.active-card {
+      transform: scale(1.02);
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+      z-index: 10;
+    }
+
+    .vid-info {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.95);
+      background: rgba(30, 30, 30, 0.95);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 80%;
+      width: 300px;
+      z-index: 1002;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      border: 1px solid #444;
+      transform-origin: center bottom;
+    }
+
+    .vid-info.show {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+
+    .vid-info::before {
+      content: "";
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 20px;
+      background: inherit;
+      clip-path: polygon(0% 0%, 100% 0%, 50% 50%);
+    }
+
+    .vid-info h3 {
+      margin-top: 0;
+      color: #3b82f6;
+    }
+
+    .vid-info p {
+      margin: 8px 0;
+    }
+
+    .vid-info .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: all 0.3s ease 0.3s;
+    }
+
+    .vid-info.show .close-btn {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .vid-info h3,
+    .vid-info p {
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+    }
+
+    .vid-info.show h3,
+    .vid-info.show p {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 0.1s;
+    }
+
+    .vid-info.show p:nth-child(2) { transition-delay: 0.15s; }
+    .vid-info.show p:nth-child(3) { transition-delay: 0.2s; }
+    .vid-info.show p:nth-child(4) { transition-delay: 0.25s; }
+
+    @keyframes pulse {
+      0% { transform: scale(1); box-shadow: 0 0 0 rgba(59, 130, 246, 0); }
+      50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+      100% { transform: scale(1); box-shadow: 0 0 0 rgba(59, 130, 246, 0); }
+    }
+
+    .vid.active-card {
+      animation: pulse 0.5s ease-out;
+      z-index: 10;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes cardEntrance {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    html {
+      -webkit-overflow-scrolling: touch;
+      overflow-y: scroll;
+      height: 100%;
+    }
+    
+    body {
+      overscroll-behavior-y: contain;
+      touch-action: manipulation;
+      min-height: 100%;
+    }
+    
+    #videos {
+      -webkit-overflow-scrolling: touch;
+      overflow-anchor: none;
+    }
+    
+    .vid {
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+    }
+    
+    body.disable-animations * {
+      transition: none !important;
+      animation: none !important;
+    }
+  </style>
+</head>
+<body>
+  <!-- ロード画面 -->
+  <div id="load" class="load">
+    <div class="load-ctn">
+      <div class="wrapper">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="shadow"></div>
+        <div class="shadow"></div>
+        <div class="shadow"></div>
+      </div>
+      <div class="msg">動画を読み込んでいます...</div>
+    </div>
+  </div>
+
+  <div id="cardLoad" class="card-load">
+    <div class="card-spin"></div>
+    <div>動画を読み込んでいます...</div>
+  </div>
+  
+  <div id="vidInfo" class="vid-info">
+    <button class="close-btn" aria-label="閉じる">&times;</button>
+    <h3 id="infoTitle">タイトル</h3>
+    <p id="infoDate">日付: 不明</p>
+    <p id="infoStatus">状態: 不明</p>
+    <p id="infoUrl">URL: </p>
+  </div>
+
+  <div class="ver">v1.2.6-glitch</div>
+
+  <div id="searchArea" role="search">
+    <input
+      id="search"
+      type="text"
+      placeholder="動画タイトルで検索"
+      aria-label="動画タイトルで検索"
+      autocomplete="off"
+    />
+    <div id="controls">
+      <select id="sort" aria-label="日付の並び順">
+        <option value="desc">新しい順</option>
+        <option value="asc">古い順</option>
+      </select>
+      <button
+        id="toggle"
+        aria-pressed="false"
+        title="不明な日付の動画を表示/非表示切替"
+      >
+        不明なを表示
+      </button>
+    </div>
+  </div>
+
+  <div id="videos" role="list" aria-live="polite"></div>
+
+  <div class="faq">
+    <div class="faq-itm">
+      <button class="faq-btn" aria-expanded="false">
+        <span class="faq-q">Q. ウイルスはないんですか？</span>
+      </button>
+      <div class="faq-ctn">
+        <div class="faq-a">
+          A. どこを見てそう思ったのか。すべてのコードを
+          <a href="https://github.com/calcsupv/render" target="_blank"
+            >github</a
+          >
+          で公開してます それでも心配ならF12で見れば
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-itm">
+      <button class="faq-btn" aria-expanded="false">
+        <span class="faq-q">Q. このサイトは何ですか？</span>
+      </button>
+      <div class="faq-ctn">
+        <div class="faq-a">
+          A. 動画のアーカイブされているリンクをまとめたサイトです
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-itm">
+      <button class="faq-btn" aria-expanded="false">
+        <span class="faq-q">Q. サムネが表示されないです</span>
+      </button>
+      <div class="faq-ctn">
+        <div class="faq-a">A. めんどかった</div>
+      </div>
+    </div>
+
+    <div class="faq-itm">
+      <button class="faq-btn" aria-expanded="false">
+        <span class="faq-q">Q. みたい動画がありません</span>
+      </button>
+      <div class="faq-ctn">
+        <div class="faq-a">
+          A.
+          アーカイブされてないから絶対無理。見れない。あとyoutubeのチャンネル削除は復元できない
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-itm">
+      <button class="faq-btn" aria-expanded="false">
+        <span class="faq-q">Q. どうやって動画見つけてるの</span>
+      </button>
+      <div class="faq-ctn">
+        <div class="faq-a">
+          <p>A. 敬語使え。</p>
+          <p>
+            <a
+              href="https://findyoutubevideo.thetechrobo.ca/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >findyoutubevideo.thetechrobo.ca</a
+            >
+            リンクを入力で見つけれる
+          </p>
+          <p>
+            <a
+              href="https://filmot.com/channel/UCFEt0_aIkl1PWCJuCx8JClg/0/FPSgamer201"
+              target="_blank"
+              rel="noopener noreferrer"
+              >filmot.com</a
+            >
+            リンクがあるサイト
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-itm">
+      <button class="faq-btn" aria-expanded="false">
+        <span class="faq-q">Q. なんでnode.js使ってるんですか？</span>
+      </button>
+      <div class="faq-ctn">
+        <div class="faq-a">管理しやすい、互換性ある</div>
+      </div>
+    </div>
+    <div class="faq-itm">
+      <button class="faq-btn" aria-expanded="false">
+        <span class="faq-q"
+          >Q. 何してんねん！どう考えても来てるやろがい敵ィ！</span
+        >
+      </button>
+      <div class="faq-ctn">
+        <div class="faq-a">A. すぐB押したわ…黙れやお前ェ…</div>
+      </div>
+    </div>
+
+    <div class="contact">
+      お問い合わせ: <a href="mailto:ii45iiy@gmail.com">email</a>
+    </div>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const container = document.getElementById("videos");
+    const search = document.getElementById("search");
+    const sort = document.getElementById("sort");
+    const toggle = document.getElementById("toggle");
+    const load = document.getElementById("load");
+    const cardLoad = document.getElementById("cardLoad");
+    const vidInfo = document.getElementById("vidInfo");
+    const infoTitle = document.getElementById("infoTitle");
+    const infoDate = document.getElementById("infoDate");
+    const infoStatus = document.getElementById("infoStatus");
+    const infoUrl = document.getElementById("infoUrl");
+    const closeBtn = document.querySelector(".close-btn");
+    let videos = [];
+    let showUnknown = false;
+    let pressTimer = null;
+    let isScrolling = false;
+    const LONG_PRESS_DURATION = 500;
+    const SCROLL_THRESHOLD = 5;
+
+    closeBtn.addEventListener("click", () => {
+      vidInfo.classList.remove("show");
+      container.classList.remove("blur-mode");
+      document.querySelectorAll(".vid").forEach(vid => {
+        vid.classList.remove("active-card");
+      });
+    });
+
+    document.addEventListener("click", (e) => {
+      if (e.target !== vidInfo && !vidInfo.contains(e.target)) {
+        vidInfo.classList.remove("show");
+        container.classList.remove("blur-mode");
+        document.querySelectorAll(".vid").forEach(vid => {
+          vid.classList.remove("active-card");
+        });
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        vidInfo.classList.remove("show");
+        container.classList.remove("blur-mode");
+        document.querySelectorAll(".vid").forEach(vid => {
+          vid.classList.remove("active-card");
+        });
+      }
+    });
+
+    document.querySelectorAll(".faq-btn").forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const item = this.parentElement;
+        const content = this.nextElementSibling;
+
+        document.querySelectorAll(".faq-itm").forEach((other) => {
+          if (other !== item) {
+            other.querySelector(".faq-btn").classList.remove("on");
+            other.querySelector(".faq-ctn").classList.remove("on");
+            other.querySelector(".faq-a").style.opacity = "0";
+            other.querySelector(".faq-a").style.transform =
+              "translateY(-10px)";
+          }
+        });
+
+        this.classList.toggle("on");
+        content.classList.toggle("on");
+        const isExpanded = this.getAttribute("aria-expanded") === "true";
+        this.setAttribute("aria-expanded", !isExpanded);
+
+        if (content.classList.contains("on")) {
+          setTimeout(() => {
+            content.querySelector(".faq-a").style.opacity = "1";
+            content.querySelector(".faq-a").style.transform = "translateY(0)";
+          }, 200);
+        }
+      });
+    });
+
+    function showLoad() {
+      load.classList.add("on");
+    }
+
+    function hideLoad() {
+      load.classList.remove("on");
+    }
+
+    function showCardLoad() {
+      cardLoad.classList.add("on");
+    }
+
+    function hideCardLoad() {
+      cardLoad.classList.remove("on");
+    }
+
+    async function loadVideos() {
+      try {
+        showLoad();
+        const res = await fetch("/date/date.json");
+        if (!res.ok) throw new Error("読み込み失敗");
+        videos = await res.json();
+        renderVideos();
+      } catch (err) {
+        container.innerHTML =
+          '<p style="text-align:center;color:#f00;">動画データの読み込みに失敗しました。</p>';
+        console.error(err);
+      } finally {
+        setTimeout(hideLoad, 500);
+      }
+    }
+
+    function setupLongPress(video, element) {
+      let startX, startY;
+      let moved = false;
+      
+      const startHandler = (e) => {
+        startX = e.touches ? e.touches[0].clientX : e.clientX;
+        startY = e.touches ? e.touches[0].clientY : e.clientY;
+        moved = false;
+        
+        pressTimer = setTimeout(() => {
+          if (!moved && !isScrolling) {
+            container.classList.add("blur-mode");
+            element.classList.add("active-card");
+            showVideoInfo(video, element);
+          }
+        }, LONG_PRESS_DURATION);
+        
+        document.addEventListener("touchmove", moveHandler, { passive: true });
+        document.addEventListener("mousemove", moveHandler);
+      };
+      
+      const moveHandler = (e) => {
+        const currentX = e.touches ? e.touches[0].clientX : e.clientX;
+        const currentY = e.touches ? e.touches[0].clientY : e.clientY;
+        
+        if (Math.abs(currentX - startX) > SCROLL_THRESHOLD || 
+            Math.abs(currentY - startY) > SCROLL_THRESHOLD) {
+          moved = true;
+          isScrolling = true;
+          clearTimeout(pressTimer);
+        }
+      };
+      
+      const endHandler = () => {
+        clearTimeout(pressTimer);
+        document.removeEventListener("touchmove", moveHandler);
+        document.removeEventListener("mousemove", moveHandler);
+        
+        setTimeout(() => {
+          isScrolling = false;
+        }, 100);
+      };
+      
+      element.addEventListener("touchstart", startHandler, { passive: false });
+      element.addEventListener("mousedown", startHandler);
+      
+      element.addEventListener("touchend", endHandler);
+      element.addEventListener("mouseup", endHandler);
+      element.addEventListener("mouseleave", endHandler);
+    }
+
+    function showVideoInfo(video, element) {
+      element.classList.add('active-card');
+      
+      const rect = element.getBoundingClientRect();
+      const cardCenterX = rect.left + rect.width / 2;
+      const cardCenterY = rect.top + rect.height / 2;
+      
+      vidInfo.style.left = `${cardCenterX}px`;
+      vidInfo.style.top = `${cardCenterY}px`;
+      vidInfo.style.transform = 'translate(-50%, -50%) scale(0.5)';
+      
+      infoTitle.textContent = video.title;
+      infoDate.textContent = `日付: ${video.date}`;
+      
+      let statusText = "状態: 不明";
+      if (video.status === 0) statusText = "状態: オフライン";
+      else if (video.status === 1) statusText = "状態: オンライン";
+      infoStatus.textContent = statusText;
+      
+      infoUrl.textContent = `URL: ${video.url}`;
+      
+      setTimeout(() => {
+        vidInfo.style.left = '50%';
+        vidInfo.style.top = '50%';
+        vidInfo.classList.add('show');
+      }, 10);
+      
+      container.classList.add("blur-mode");
+    }
+
+    function renderVideos() {
+      const filter = search.value.trim().toLowerCase();
+      const sortVal = sort.value;
+
+      let filtered = videos.filter((v) =>
+        v.title.toLowerCase().includes(filter)
+      );
+      if (!showUnknown) {
+        filtered = filtered.filter((v) => v.date !== "不明");
+      }
+
+      filtered.sort((a, b) => {
+        if (a.date === "不明" && b.date === "不明") return 0;
+        if (a.date === "不明") return 1;
+        if (b.date === "不明") return -1;
+        return sortVal === "desc"
+          ? new Date(b.date) - new Date(a.date)
+          : new Date(a.date) - new Date(b.date);
+      });
+
+      container.innerHTML = "";
+
+      if (filtered.length === 0) {
+        const p = document.createElement("p");
+        p.textContent = "該当する動画はありません。";
+        p.style.textAlign = "center";
+        p.style.color = "#aaa";
+        container.appendChild(p);
+        return;
+      }
+
+      filtered.forEach((video, index) => {
+        const a = document.createElement("a");
+        a.href = video.url;
+        a.rel = "noopener noreferrer";
+        a.className = "vid";
+        a.setAttribute("role", "listitem");
+        a.setAttribute("tabindex", "0");
+
+        let statusClass = "s2";
+        if (video.status === 0) statusClass = "s0";
+        else if (video.status === 1) statusClass = "s1";
+
+        a.innerHTML = `
+          <div class="thumb"><img src="${
+            video.img || ""
+          }" alt="" loading="lazy" /></div>
+          <div class="info">
+            <p class="title">${video.title}</p>
+            <p class="date">${video.date}</p>
+          </div>
+          <div class="stat ${statusClass}" title="${
+            video.status === 0
+              ? "オフライン"
+              : video.status === 1
+              ? "オンライン"
+              : "状態不明"
+          }"></div>
+          ${
+            video.url.includes("ghost")
+              ? `
+                <div class="ghost">
+                  <div class="eye l"></div>
+                  <div class="eye r"></div>
+                </div>`
+              : ""
+          }
+        `;
+
+        setupLongPress(video, a);
+
+        a.addEventListener("click", (e) => {
+          if (a.classList.contains("active-card")) {
+            e.preventDefault();
+              return;
+            }
+            e.preventDefault();
+            showCardLoad();
+            setTimeout(() => {
+              window.location.href = video.url;
+            }, 300);
+          });
+
+          container.appendChild(a);
+          setTimeout(() => {
+            a.classList.add("show");
+          }, index * 50);
+        });
+      }
+
+      search.addEventListener("input", renderVideos);
+      sort.addEventListener("change", renderVideos);
+      toggle.addEventListener("click", () => {
+        showUnknown = !showUnknown;
+        toggle.setAttribute("aria-pressed", showUnknown);
+        toggle.textContent = showUnknown ? "不明なを非表示" : "不明なを表示";
+        renderVideos();
+      });
+
+      window.addEventListener("touchmove", function() {
+        document.body.classList.add("disable-animations");
+        clearTimeout(window.scrollEndTimer);
+        window.scrollEndTimer = setTimeout(function() {
+          document.body.classList.remove("disable-animations");
+        }, 100);
+      }, { passive: true });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        loadVideos();
+        const socket = io();
+        socket.on("update-videos", () => {
+          showLoad();
+          loadVideos();
+        });
+      });
+    </script>
+  </body>
+</html>
